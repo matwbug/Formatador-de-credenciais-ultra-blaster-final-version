@@ -6,7 +6,7 @@
 <body>
     <h1>Gerar Mensagens Personalizadas</h1>
     <h2>Template da Mensagem</h2>
-    <textarea id="templateInput" rows="10" cols="50">
+    <textarea id="templateInput" rows="15" cols="50">
 Agradecemos imensamente pela sua compra! 🎉
 
 Credenciais da conta 🔒
@@ -14,16 +14,27 @@ Usuário: {user}
 Senha: {pass}
 
 Obs: Após fazer a alteração dos dados da conta sinta-se livre para remover todos os antigos amigos e alterar o nick! :)
-
 Recomendo que você faça login na sua conta imediatamente e altere seus dados de acesso. Para sua segurança, caso deseje adicionar saldo ou realizar compras, é aconselhável aguardar pelo menos um mês. Esse prazo ajuda a evitar que a Riot interprete essas ações rápidas como uma possível fraude.
 
 Obrigado pela compreensão!
+
+🛠️ Instruções para Alterar o E-mail na Riot Games
+Acesse o site da Riot Games 🌐: https://account.riotgames.com
+
+1. Insira suas credenciais, nome de usuário e senha, caso seja necessário um código para entrar verifique o vendedor está online e solicite a ele!
+2. No menu, procure pela guia > Informações pessoais > Encontre a área para alterar o e-mail. ✉️
+3. Digite seu novo e-mail e confirme.
+4. Vá até a caixa de entrada do novo e-mail e verifique o código enviado pela Riot Games.
     </textarea><br>
     
     <h2>Credenciais</h2>
     <textarea id="credentialsInput" rows="10" cols="50" placeholder="Insira as credenciais aqui, cada uma em uma linha. Ex: user:password"></textarea><br>
+
+    <h2>Separador</h2>
+    <input type="text" id="separatorInput" placeholder="Insira o separador" value="////"><br><br>
     
     <button onclick="generateMessages()">Gerar Mensagens</button>
+    <button onclick="copyAllMessages()">Copiar Tudo</button>
 
     <h2>Mensagens Geradas</h2>
     <div id="messagesOutput"></div>
@@ -32,27 +43,26 @@ Obrigado pela compreensão!
         function generateMessages() {
             const template = document.getElementById('templateInput').value;
             const input = document.getElementById('credentialsInput').value;
+            const separator = document.getElementById('separatorInput').value || '=============================================';
             const credentialsList = input.split('\n').map(item => item.trim()).filter(item => item);
 
             let messagesOutput = '';
             credentialsList.forEach((credentials, index) => {
                 const [user, pass] = credentials.split(':');
                 const personalizedMessage = template.replace('{user}', user).replace('{pass}', pass);
-                messagesOutput += `
-                    <div>
-                        <pre id="message${index}">${personalizedMessage}</pre>
-                        <button onclick="copyToClipboard('message${index}')">Copiar</button>
-                    </div><br>
-                `;
+                messagesOutput += `<pre>${personalizedMessage}</pre>`;
+                if (index < credentialsList.length - 1) {
+                    messagesOutput += `<hr>${separator}<hr>`;
+                }
             });
 
             document.getElementById('messagesOutput').innerHTML = messagesOutput;
         }
 
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Mensagem copiada para a área de transferência!');
+        function copyAllMessages() {
+            const messages = document.getElementById('messagesOutput').innerText;
+            navigator.clipboard.writeText(messages).then(() => {
+                alert('Mensagens copiadas para a área de transferência!');
             }).catch(err => {
                 console.error('Erro ao copiar texto: ', err);
             });
